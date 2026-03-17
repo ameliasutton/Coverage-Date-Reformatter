@@ -36,4 +36,5 @@ A simple script to reformat resource coverage start and end dates.
     - Embargo
     - CustomEmbargo
   - Any columns that you want to remain in the output file should be placed before the Coverage date fields
-- Run the script using either dateReformatting.exe (from the script folder) or dateReformatting.py (via the console)
+- Run the script via the console using ` python dateReformatting.py`
+- Alternatively, run the buildExecutable.bat to generate an .exe file to run. (This requires pyinstaller, but the resulting .exe can be run on a computer without python installed)
