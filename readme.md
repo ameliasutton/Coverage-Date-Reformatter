@@ -1,4 +1,4 @@
-# LDlite Single Select
+# Coverage Date Reformatter 
 Copyright (C) 2025-2026  Amelia Sutton
 
 This program is free software: you can redistribute it and/or modify
