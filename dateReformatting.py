@@ -12,21 +12,21 @@ def applyDateSplits(row, columns):
     elif pandas.notna(row.ManagedCoverageBegin) and pandas.notna(row.ManagedCoverageEnd):
         row.CoverageBegin = row.ManagedCoverageBegin
         row.CoverageEnd = row.ManagedCoverageEnd
-    row.CoverageBegin = row.CoverageBegin.split("|")
-    row.CoverageEnd = row.CoverageEnd.split("|")
+    coverage_start_dates = row.CoverageBegin.split("|")
+    coverage_end_dates = row.CoverageEnd.split("|")
     returned_rows = []
-    if len(row.CoverageEnd) > 1:
-        for i, coverage_end in enumerate(row.CoverageEnd):
+    if len(coverage_end_dates) > 1:
+        for i, coverage_end in enumerate(coverage_end_dates):
             row_copy = row.copy()
-            row_copy.CoverageBegin = row.CoverageBegin[i]
+            row_copy.CoverageBegin = coverage_start_dates[i]
             row_copy.CoverageEnd = coverage_end
-            if i != len(row.CoverageEnd)-1:
+            if i != len(coverage_end_dates)-1:
                 row_copy.Embargo = pandas.NA
                 row_copy.CustomEmbargo = pandas.NA
             returned_rows.append(dict(zip(columns, row_copy)))
     else:
-        row.CoverageEnd = row.CoverageEnd[0]
-        row.CoverageBegin = row.CoverageBegin[0]
+        row.CoverageEnd = coverage_end_dates[0]
+        row.CoverageBegin = coverage_start_dates[0]
         returned_rows = [row.to_dict()]
     return returned_rows
 
@@ -93,7 +93,9 @@ def applyEmbargo(row):
     if pandas.notna(row.CustomEmbargo):
         number_index = row.CustomEmbargo.find(" ")
         embargo_duration = int(row.CustomEmbargo[:number_index])
-        if row["CustomEmbargo"][-6:] == "months":  # Custom Embargos in Months
+        if embargo_duration == 0:
+            return row
+        elif row["CustomEmbargo"][-6:] == "months":  # Custom Embargos in Months
             if embargo_duration >= 6:
                 embargo_duration = round(embargo_duration/11.999)
             else:
@@ -108,7 +110,9 @@ def applyEmbargo(row):
     elif pandas.notna(row.Embargo):
         number_index = row.Embargo.find(" ")
         embargo_duration = int(row.Embargo[:number_index])
-        if row.Embargo[-6:] == "months":  # Embargos in Months
+        if embargo_duration == 0:
+            return row
+        elif row.Embargo[-6:] == "months":  # Embargos in Months
             if embargo_duration >= 6:
                 embargo_duration = round(embargo_duration/11.999)
             else:
